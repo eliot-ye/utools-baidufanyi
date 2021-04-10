@@ -1,0 +1,18 @@
+{
+  "pluginName": "百度翻译",
+  "description": "使用百度翻译 api 实现的一款翻译插件",
+  "author": "Eliot.Ye",
+  "main": "index.html",
+  "logo": "logo.png",
+  "version": "0.0.1",
+  "features": [
+    {
+      "code": "百度翻译",
+      "explain": "百度翻译",
+      "cmds": [
+        "百度翻译",
+        "翻译"
+      ]
+    }
+  ]
+}
