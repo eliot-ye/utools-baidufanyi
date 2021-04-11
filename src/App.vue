@@ -1,15 +1,42 @@
 <template>
-  <div class="card" style="padding-bottom: 10px">
-    <CustomTextarea auto-focus v-model="originalText" @keydown="onKeydown" />
-    <div style="margin-top: 10px; color: #afbac0; font-size: 12px">
-      按下回车键翻译
+  <img
+    src="./assets/img/setting.png"
+    alt="setting"
+    class="icon setting"
+    @click="showSetting = true"
+  />
+  <SettingPopup v-model:show="showSetting" />
+  <div class="card" style="display: flex; height: 100%">
+    <div class="textarea-container" style="padding-right: 10px">
+      <div style="margin-bottom: 10px">
+        <CustomSelect has-auto v-model="originalLang" />
+      </div>
+      <CustomTextarea auto-focus v-model="originalText" @keydown="onKeydown" />
+      <div style="background-color: #fafafa; padding: 10px">
+        <img
+          src="./assets/img/copy.png"
+          alt="copy"
+          class="icon"
+          @click="onCopyOriginalText"
+        />
+      </div>
+      <div class="textarea-desc">* 按下回车键翻译</div>
     </div>
-  </div>
-  <div class="card" style="padding-top: 10px">
-    <div style="margin-bottom: 10px; text-align: right">
-      <CustomSelect v-model="translateLang" />
+    <div class="textarea-container" style="padding-left: 10px">
+      <div style="margin-bottom: 10px">
+        <CustomSelect v-model="translateLang" />
+      </div>
+      <CustomTextarea v-model="translateText" />
+      <div style="background-color: #fafafa; padding: 10px">
+        <img
+          src="./assets/img/copy.png"
+          alt="copy"
+          class="icon"
+          @click="onCopyTranslateText"
+        />
+      </div>
+      <div class="textarea-desc" style="text-align: right">* by baidu</div>
     </div>
-    <CustomTextarea v-model="translateText" />
   </div>
 </template>
 
@@ -17,6 +44,7 @@
 import { defineComponent, ref } from "vue";
 import CustomTextarea from "./components/CustomTextarea.vue";
 import CustomSelect from "./components/CustomSelect.vue";
+import SettingPopup from "./components/SettingPopup.vue";
 
 import { apiBaiduTranslate } from "./api/apiBaiduTranslate";
 import errprCodeList from "./assets/dict_errorCode";
@@ -26,11 +54,13 @@ export default defineComponent({
   components: {
     CustomTextarea,
     CustomSelect,
+    SettingPopup,
   },
   setup() {
+    const originalLang = ref("auto");
     const originalText = ref("");
-    const translateLang = ref("zh");
 
+    const translateLang = ref("zh");
     const translateText = ref("");
 
     async function getBaiduTranslate() {
@@ -55,19 +85,27 @@ export default defineComponent({
       }
     }
 
-    if (window.utools) {
-      window.utools.onPluginReady(() => {
-        window.utools.setSubInput(({ text }) => {
-          originalText.value = text;
-          console.log("setSubInput", text);
-        }, "翻译");
-        window.utools.onPluginEnter(({ code, type, payload, optional }) => {
-          console.log("onPluginEnter 用户进入插件", code, type, payload);
-        });
-      });
+    function onCopyOriginalText() {
+      if (!window.utools) return;
+      window.utools.copyText(originalText.value);
+    }
+    function onCopyTranslateText() {
+      if (!window.utools) return;
+      window.utools.copyText(translateText.value);
     }
 
-    return { originalText, translateLang, translateText, onKeydown };
+    const showSetting = ref(false);
+
+    return {
+      originalLang,
+      originalText,
+      translateLang,
+      translateText,
+      onKeydown,
+      onCopyOriginalText,
+      onCopyTranslateText,
+      showSetting,
+    };
   },
 });
 </script>
@@ -83,12 +121,31 @@ export default defineComponent({
   height: 100vh;
   background-color: #fafafa;
   padding: 20px;
+  position: relative;
+}
+.icon {
+  width: 20px;
+  cursor: pointer;
+}
+.setting {
+  position: absolute;
+  right: 5px;
+  top: 5px;
 }
 .card {
-  margin-bottom: 24px;
-  padding: 24px;
+  padding: 14px 24px;
   background-color: #fff;
   border-radius: 20px;
-  box-shadow: 0 8px 12px #ebedf0;
+  box-shadow: 0 8px 12px #fff;
+}
+.textarea-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.textarea-desc {
+  margin-top: 10px;
+  color: #afbac0;
+  font-size: 12px;
 }
 </style>

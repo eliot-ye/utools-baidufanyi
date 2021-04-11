@@ -1,13 +1,21 @@
 <script lang="ts">
 import { defineComponent, h } from "@vue/runtime-core";
-import languageTypeList from "../assets/dict_languageType";
+import languageTypeDict from "../assets/dict_languageType";
 
 export default defineComponent({
   name: "CustomSelect",
-  props: ["modelValue"],
+  props: { modelValue: String, hasAuto: Boolean },
   emits: ["update:modelValue"],
   setup(props, { emit }) {
     function renderOption() {
+      let languageTypeList = languageTypeDict;
+      if (props.hasAuto) {
+        languageTypeList = [
+          { title: "自动识别", value: "auto" },
+          ...languageTypeList,
+        ];
+      }
+
       return languageTypeList.map((item) => {
         return h(
           "option",

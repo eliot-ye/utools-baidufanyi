@@ -1,5 +1,6 @@
 import axios from "axios"
 import { MD5 } from "crypto-js"
+import { baidufanyiAppidGet, baidufanyiKeyGet } from "../tools/utools";
 
 interface BaiduTranslateReq {
   query: string
@@ -23,8 +24,15 @@ interface BaiduTranslateRes {
 interface BaiduTranslateRes { error_code: string, error_msg: string }
 
 export async function apiBaiduTranslate({ query, from = 'auto', to = 'zh' }: BaiduTranslateReq): Promise<BaiduTranslateRes> {
-  const appid = '20201206000639851';
-  const key = '4fKPUl9EaivnS0DU5cZ4';
+  let appid = '20210411000772464';
+  let key = 'PqqBoxNQ3vHzqJ4xKQ0n';
+
+  const appidObj = baidufanyiAppidGet();
+  if (appidObj) appid = appidObj.data;
+
+  const keyObj = baidufanyiKeyGet();
+  if (keyObj) key = keyObj.data;
+
   const salt = (new Date).getTime();
   const signPre = appid + query + salt + key;
   const signMD5 = MD5(signPre).toString();

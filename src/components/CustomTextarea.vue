@@ -1,8 +1,7 @@
 <template>
-  <div>
+  <div style="flex: 1">
     <textarea
       ref="textareaEle"
-      :style="{ height: height || 'auto' }"
       class="CustomTextarea"
       :value="modelValue"
       @input="onInput"
@@ -11,17 +10,15 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, nextTick, onMounted } from "vue";
+import { ref, defineComponent, onMounted } from "vue";
 export default defineComponent({
   name: "CustomTextarea",
   props: { modelValue: String, autoFocus: Boolean },
   emits: ["update:modelValue"],
   setup: (props, { emit }) => {
-    const height = ref("");
     function onInput(payload: any) {
       const textAreaSelf: HTMLTextAreaElement = payload.target;
       emit("update:modelValue", textAreaSelf.value);
-      height.value = `${textAreaSelf.scrollHeight}px`;
     }
 
     const textareaEle = ref<HTMLTextAreaElement>();
@@ -29,7 +26,7 @@ export default defineComponent({
       if (props.autoFocus) textareaEle.value?.focus();
     });
 
-    return { onInput, height, textareaEle };
+    return { onInput, textareaEle };
   },
 });
 </script>
@@ -38,6 +35,7 @@ export default defineComponent({
 .CustomTextarea {
   display: block;
   width: 100%;
+  height: 100%;
   padding: 10px;
   background-color: #fafafa;
   resize: none;
