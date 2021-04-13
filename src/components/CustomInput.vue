@@ -1,6 +1,6 @@
 <template>
   <div class="CustomInput-container">
-    <div class="CustomInput-title">{{title}}</div>
+    <div class="CustomInput-title">{{ title }}</div>
     <div class="CustomInput-wrapper">
       <input
         :type="type"
@@ -9,7 +9,8 @@
         @input="onInput"
       />
     </div>
-    <div class="CustomInput-desc"></div>
+    <div class="CustomInput-desc CustomInput-error" v-if="hasError">{{ errorText }}</div>
+    <div class="CustomInput-desc" v-else-if="desc">{{ desc }}</div>
   </div>
 </template>
 
@@ -20,7 +21,10 @@ export default defineComponent({
   props: {
     modelValue: { type: String, required: true },
     type: { type: String as PropType<"text" | "password">, default: "text" },
-    title: String
+    title: String,
+    desc: String,
+    errorText: String,
+    hasError: Boolean,
   },
   emits: ["update:modelValue"],
   setup: (props, { emit }) => {
@@ -38,7 +42,7 @@ export default defineComponent({
 .CustomInput-container {
   width: 100%;
 }
-.CustomInput-title{
+.CustomInput-title {
   color: #afbac0;
 }
 .CustomInput-wrapper {
@@ -51,5 +55,12 @@ export default defineComponent({
   outline: none;
   width: 100%;
   font-size: 20px;
+}
+.CustomInput-desc {
+  color: #afbac0;
+  font-size: 12px;
+}
+.CustomInput-error {
+  color: red;
 }
 </style>

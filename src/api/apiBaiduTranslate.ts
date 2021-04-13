@@ -28,10 +28,10 @@ export async function apiBaiduTranslate({ query, from = 'auto', to = 'zh' }: Bai
   let key = 'PqqBoxNQ3vHzqJ4xKQ0n';
 
   const appidObj = baidufanyiAppidGet();
-  if (appidObj) appid = appidObj.data;
+  if (appidObj) appid = appidObj.data || appid;
 
   const keyObj = baidufanyiKeyGet();
-  if (keyObj) key = keyObj.data;
+  if (keyObj) key = keyObj.data || key;
 
   const salt = (new Date).getTime();
   const signPre = appid + query + salt + key;

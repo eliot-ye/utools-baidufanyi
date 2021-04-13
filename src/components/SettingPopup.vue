@@ -5,12 +5,31 @@
     @click="onClose"
   >
     <div class="SettingPopup-container card" @click.stop>
-      <div style="padding: 20px; padding-left: 0; color: #afbac0">
-        自定义百度翻译密钥
+      <div
+        style="padding: 20px; padding-left: 0; color: #afbac0; font-size: 20px"
+      >
+        自定义百度翻译 appid 和 key
+        <div style="font-size: 12px; padding-top: 8px">
+          * appid 和 key 必须成对出现，否则会翻译失败。
+        </div>
+        <div style="font-size: 12px; padding-top: 8px">
+          * appid 和 key 如果为空，会使用默认的密钥。
+        </div>
       </div>
-      <CustomInput v-model="appid" title="appid" />
+      <CustomInput
+        v-model="appid.value"
+        title="appid"
+        error-text="appid不能为空"
+        :has-error="appid.hasError"
+        @update:modelValue="() => (appid.hasError = false)"
+      />
       <div style="height: 30px"></div>
-      <CustomInput v-model="key" title="key" />
+      <CustomInput
+        v-model="key.value"
+        title="key"
+        error-text="key不能为空"
+        :has-error="key.hasError"
+      />
       <div style="height: 30px"></div>
       <div style="text-align: center">
         <button type="button" @click="onSave">确定</button>
@@ -22,7 +41,7 @@
 <script lang="ts">
 import CustomInput from "./CustomInput.vue";
 
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, reactive } from "vue";
 import {
   baidufanyiAppidGet,
   baidufanyiAppidSet,
@@ -39,8 +58,8 @@ export default defineComponent({
       emit("update:show", false);
     }
 
-    const appid = ref("");
-    const key = ref("");
+    const appid = reactive({ value: "", hasError: false });
+    const key = reactive({ value: "", hasError: false });
 
     if (window.utools) {
       window.utools.onPluginReady(() => {
