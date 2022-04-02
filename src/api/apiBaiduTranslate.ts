@@ -37,6 +37,6 @@ export async function apiBaiduTranslate({ query, from = 'auto', to = 'zh' }: Bai
   const signPre = appid + query + salt + key;
   const signMD5 = MD5(signPre).toString();
 
-  const res = await axios.get(`${import.meta.env.PROD ? 'http://api.fanyi.baidu.com' : ''}/api/trans/vip/translate?q=${encodeURI(query)}&appid=${appid}&salt=${salt}&from=${from}&to=${to}&sign=${signMD5}`)
+  const res = await axios.get(`${import.meta.env.PROD ? 'http://api.fanyi.baidu.com' : ''}/api/trans/vip/translate?q=${encodeURIComponent(query)}&appid=${appid}&salt=${salt}&from=${from}&to=${to}&sign=${signMD5}`)
   return res.data
 }
