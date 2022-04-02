@@ -13,12 +13,7 @@
       </div>
       <CustomTextarea auto-focus v-model="originalText" @keydown="onKeydown" />
       <div style="background-color: #fafafa; padding: 10px">
-        <img
-          src="./assets/img/copy.png"
-          alt="copy"
-          class="icon"
-          @click="onCopyOriginalText"
-        />
+        <img src="./assets/img/copy.png" alt="copy" class="icon" @click="onCopyOriginalText" />
       </div>
       <div class="textarea-desc">* 按下回车键翻译</div>
     </div>
@@ -28,20 +23,15 @@
       </div>
       <CustomTextarea v-model="translateText" />
       <div style="background-color: #fafafa; padding: 10px">
-        <img
-          src="./assets/img/copy.png"
-          alt="copy"
-          class="icon"
-          @click="onCopyTranslateText"
-        />
+        <img src="./assets/img/copy.png" alt="copy" class="icon" @click="onCopyTranslateText" />
       </div>
       <div class="textarea-desc" style="text-align: right">* by baidu</div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 import CustomTextarea from "./components/CustomTextarea.vue";
 import CustomSelect from "./components/CustomSelect.vue";
 import SettingPopup from "./components/SettingPopup.vue";
@@ -49,65 +39,53 @@ import SettingPopup from "./components/SettingPopup.vue";
 import { apiBaiduTranslate } from "./api/apiBaiduTranslate";
 import errprCodeList from "./assets/dict_errorCode";
 
-export default defineComponent({
-  name: "App",
-  components: {
-    CustomTextarea,
-    CustomSelect,
-    SettingPopup,
-  },
-  setup() {
-    const originalLang = ref("auto");
-    const originalText = ref("");
+window.utools.onPluginEnter(async (data)=>{
+  const clipboardText = await navigator.clipboard.readText()
+  if(clipboardText){
+    originalText.value = clipboardText;
+    getBaiduTranslate()
+  }
+})
 
-    const translateLang = ref("zh");
-    const translateText = ref("");
+const originalLang = ref("auto");
+const originalText = ref("");
 
-    async function getBaiduTranslate() {
-      const res = await apiBaiduTranslate({
-        query: originalText.value,
-        to: translateLang.value,
-      });
-      if (res.error_code) {
-        const errorObj = errprCodeList.find(
-          (item) => item.value === res.error_code
-        );
-        if (!errorObj) return;
-        translateText.value = `${errorObj.title} - ${errorObj.subTitle}`;
-        return;
-      }
-      translateText.value = res.trans_result.map((item) => item.dst).join("\n");
-    }
+const translateLang = ref("zh");
+const translateText = ref("");
 
-    function onKeydown(payload: KeyboardEvent) {
-      if (payload.key === "Enter") {
-        getBaiduTranslate();
-      }
-    }
+async function getBaiduTranslate() {
+  const res = await apiBaiduTranslate({
+    query: originalText.value,
+    to: translateLang.value,
+  });
+  if (res.error_code) {
+    const errorObj = errprCodeList.find(
+      (item) => item.value === res.error_code
+    );
+    if (!errorObj) return;
+    translateText.value = `${errorObj.title} - ${errorObj.subTitle}`;
+    return;
+  }
+  translateText.value = res.trans_result.map((item) => item.dst).join("\n");
+}
 
-    function onCopyOriginalText() {
-      if (!window.utools) return;
-      window.utools.copyText(originalText.value);
-    }
-    function onCopyTranslateText() {
-      if (!window.utools) return;
-      window.utools.copyText(translateText.value);
-    }
+function onKeydown(payload: KeyboardEvent) {
+  if (payload.key === "Enter") {
+    getBaiduTranslate();
+  }
+}
 
-    const showSetting = ref(false);
+function onCopyOriginalText() {
+  if (!window.utools) return;
+  window.utools.copyText(originalText.value);
+}
+function onCopyTranslateText() {
+  if (!window.utools) return;
+  window.utools.copyText(translateText.value);
+}
 
-    return {
-      originalLang,
-      originalText,
-      translateLang,
-      translateText,
-      onKeydown,
-      onCopyOriginalText,
-      onCopyTranslateText,
-      showSetting,
-    };
-  },
-});
+const showSetting = ref(false);
+
 </script>
 
 <style>
@@ -119,9 +97,12 @@ export default defineComponent({
 #app {
   width: 100vw;
   height: 100vh;
-  background-color: #fafafa;
+  background-color: #ddd;
   padding: 20px;
   position: relative;
+  font-family: 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Helvetica Neue',
+    'Helvetica', 'Arial', sans-serif;
 }
 .icon {
   width: 20px;

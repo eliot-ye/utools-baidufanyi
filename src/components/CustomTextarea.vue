@@ -41,6 +41,10 @@ export default defineComponent({
   resize: none;
   min-height: 120px;
   border: none;
+  font-size: 18px;
+  font-family: 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Helvetica Neue',
+    'Helvetica', 'Arial', sans-serif;
 }
 .CustomTextarea:focus {
   outline: none;
